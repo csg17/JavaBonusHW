@@ -33,7 +33,7 @@ public class ComandLine {
 	private File location;
 	private String[] filesAndDirs;
 	private String[] ignFilesAndDirs;
-	private boolean indexL, indexA, indexR, indexLT, indexF;
+	private boolean indexL, indexA, indexR, indexS, indexF;
 	
 	public static void main(String[] args) throws IOException {
 		ComandLine coml = new ComandLine();
@@ -45,20 +45,15 @@ public class ComandLine {
 		Options options = createOption();
 		if ( parseOption(options, args) ) {
 			Ls(getDir(), true);
-			
+			printHelp(options);
+			System.out.println();
+			System.out.println("-------------------------------------------------------------------\n");
 			if(indexF) LsF();
-			System.out.println();
-			
 			if(indexA) LsA();
-			System.out.println();
-			
 			if(indexR) LsR(getDir());
-			System.out.println();
-			
 			if(indexL) LsL();
-			System.out.println();
-			
-			if(indexLT) LsT();
+			if(indexS) LsS();
+			System.out.println("\n\n-------------------------------------------------------------------\n");
 		} 
 	}
 	public String getDir() {
@@ -158,7 +153,7 @@ public class ComandLine {
 		}
 	}
 	
-	public void LsT() throws IOException {
+	public void LsS() throws IOException {
 		for( int i=0; i<ignFilesAndDirs.length; i++) {
 			Path path = Paths.get(ignFilesAndDirs[i]);
 			File file = new File(ignFilesAndDirs[i]);
@@ -181,6 +176,7 @@ public class ComandLine {
 			
 			System.out.print(fstr.getName() + " \n");
 		}
+		System.out.println();
 	}
 	
 	public void LsF() {
@@ -190,6 +186,8 @@ public class ComandLine {
 			System.out.print(str + "\t");
 			index++;
 		}
+		System.out.println();
+		System.out.println();
 	}
 	
 	public void LsA() {
@@ -201,6 +199,8 @@ public class ComandLine {
 			System.out.print(str + "\t");
 			index++;
 		}
+		System.out.println();
+		System.out.println();
 	}
 	
 	private boolean parseOption(Options options, String[] args) {
@@ -213,7 +213,7 @@ public class ComandLine {
 			indexL = cmd.hasOption("l");
 			indexA = cmd.hasOption("a");
 			indexR = cmd.hasOption("R");
-			indexLT = cmd.hasOption("lt");
+			indexS = cmd.hasOption("s");
 			indexF = cmd.hasOption("f");
 			
 		} catch(Exception e) { //최상위 클래스 넣어서 한번에 처리, exception 나오면 도움말 출력  
@@ -244,7 +244,7 @@ public class ComandLine {
 				.build()); //반드시 필요하다는 걸 의미, 안들어오면 exception 발생.
 		
 		options.addOption(Option.builder("a").longOpt("all")
-				.desc("List all directory") // description
+				.desc("List all sorted directories and files") // description
 				//.hasArg() //값받아야 하니
 				.argName("all name") //argument name이 어떤 걸 의미하는지 보여주는 역
 				//.required()
@@ -255,16 +255,17 @@ public class ComandLine {
 				.argName("recursive") //argument name이 어떤 걸 의미하는지 보여주는 역       
 				.build());
 		
-		options.addOption(Option.builder("lt").longOpt("time")
-				.desc("sort the list of files by modification time") // description
-				.argName("time") //argument name이 어떤 걸 의미하는지 보여주는 역       
-				.build());
-		
 		options.addOption(Option.builder("f").longOpt("files")
-				.desc("do not sort.") // description
+				.desc("List all directories and files") // description
 				.argName("files") //argument name이 어떤 걸 의미하는지 보여주는 역       
 				.build());
 		
+		options.addOption(Option.builder("s").longOpt("size")
+				.desc("List all directories and files with their size.") // description
+				.argName("size") //argument name이 어떤 걸 의미하는지 보여주는 역       
+				.build());
+		
+
 		return options;
 	}
 }
